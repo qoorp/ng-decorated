@@ -8,6 +8,9 @@ export function Component (options = {}) {
         if (!options.selector) {
             throw new Error('@Component() must contains `selector` property');
         }
+        if (options.bindings) {
+            console.warn('Deprecated: bindings is set in Component options on class', __getName(target), 'consider using @Input()/@Ouput()')
+        }
 
         // convert to camelCase in case selector is in kebab-case
         const selector = options.selector.indexOf('-') > -1 ? dashToCamelCase(options.selector) : options.selector;
@@ -33,7 +36,7 @@ export function Component (options = {}) {
             .get(__getName(target))
             .assign({
                 controller : target,
-                bindings : {}, // set as empty as it will be populated via @Input decorator
+                bindings : options.bindings || {}, // Set legacy binding for backwards compatibility
                 template : options.template,
                 templateUrl : options.templateUrl
             });
